@@ -25,9 +25,7 @@
     'version': '9.0.1.0.0',
     'category': 'project',
     'license': 'AGPL-3',
-    'depends': [
-        'web',
-    ],
+    'depends': ['project'],
     'data': [
 	'project_view.xml'
     ],
