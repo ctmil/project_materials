@@ -23,10 +23,24 @@ class project_materials(models.Model):
 				return_value = return_value + line.product_qty
 		self.qty_consumed = return_value
 
+	@api.one
+	def _compute_qty_delivered(self):
+		return_value = 0
+		purchase_lines = self.env['purchase.order.line'].search([('account_analytic_id','=',self.project_id.analytic_account_id.id)])
+		for line in purchase_lines:
+			if line.order_id.state in ['purchase','done']:
+				if line.order_id.picking_ids:
+					picking_ids = line.order_id.picking_ids
+					for picking in picking_ids:
+						import pdb;pdb.set_trace()
+		self.qty_delivered = return_value
+
+
 	project_id = fields.Many2one('project.project')
 	product_id = fields.Many2one('product.product',string='Producto')
 	qty_budget = fields.Float(string='Cantidad Presupuestada')
-	qty_consumed = fields.Float(string='Cantidad Consumida',compute=_compute_qty_consumed)
+	qty_consumed = fields.Float(string='Cantidad Ordenada',compute=_compute_qty_consumed)
+	qty_delivered = fields.Float(string='Cantidad Entregada',compute=_compute_qty_delivered)
 
 class project_project(models.Model):
 	_inherit = 'project.project'
