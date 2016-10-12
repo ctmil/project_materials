@@ -9,7 +9,7 @@
       <field name="arch" type="xml">
           <!--Materials budgeted-->
           <xpath expr="//page[1]" position="after">
-		<page string="Materiales presupuestados">
+		<page string="Materiales presupuestados" groups="project.group_project_manager">
 			<field name="material_ids" >
 		            <tree string="Materiales presupuestados" editable="top">
        			      <field name="product_id"/>
