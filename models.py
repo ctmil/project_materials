@@ -15,7 +15,7 @@ class project_materials(models.Model):
 	_name = 'project.materials'
 
 	project_id = fields.Many2one('project.project')
-	product_id = fields.Many2one('product.product')
+	product_id = fields.Many2one('product.product',string='Producto')
 	qty_budget = fields.Float(string='Cantidad Presupuestada')
 	qty_consumed = fields.Float(string='Cantidad Consumida')
 
