@@ -32,7 +32,10 @@ class project_materials(models.Model):
 				if line.order_id.picking_ids:
 					picking_ids = line.order_id.picking_ids
 					for picking in picking_ids:
-						import pdb;pdb.set_trace()
+						# import pdb;pdb.set_trace()
+						if picking.product_id.id == self.product_id.id and picking.state == 'done':
+							for move_line in picking.move_lines:
+								return_value = return_value + move_line.product_qty
 		self.qty_delivered = return_value
 
 
