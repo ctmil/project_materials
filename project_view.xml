@@ -8,13 +8,17 @@
       <field name="inherit_id" ref="project.edit_project"/>
       <field name="arch" type="xml">
           <!--Materials budgeted-->
-          <xpath expr="//form[@string='Project']/sheet/notebook/page[@string='Settings']" position="after">
-            <tree string="Materiales presupuestados" editable="top">
-       	      <field name="product_id"/>
-              <field name="qty_budget"/>
-              <field name="qty_consumed"/>
-       	    </tree>
- 	  </xpath>
+          <!-- xpath expr="//form[@string='Project']/sheet/notebook/page[@string='Settings']" position="after" -->
+	<field name="sequence" position="after">
+		<field name="material_ids">
+	            <tree string="Materiales presupuestados" editable="top">
+       		      <field name="product_id"/>
+	              <field name="qty_budget"/>
+        	      <field name="qty_consumed" />
+	       	    </tree>
+		</field>
+	</field>
+ 	  <!-- /xpath -->
       </field>
     </record>
 
