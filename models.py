@@ -29,13 +29,7 @@ class project_materials(models.Model):
 		purchase_lines = self.env['purchase.order.line'].search([('account_analytic_id','=',self.project_id.analytic_account_id.id)])
 		for line in purchase_lines:
 			if line.order_id.state in ['purchase','done']:
-				if line.order_id.picking_ids:
-					picking_ids = line.order_id.picking_ids
-					for picking in picking_ids:
-						# import pdb;pdb.set_trace()
-						if picking.product_id.id == self.product_id.id and picking.state == 'done':
-							for pack_op in picking.pack_operation_product_ids:
-								return_value = return_value + pack_op.qty_done
+				return_value = return_value + line.qty_received
 		self.qty_delivered = return_value
 
 
