@@ -29,6 +29,7 @@
         'web',
     ],
     'data': [
+	'project_view.xml'
     ],
     'qweb': [
     ],
