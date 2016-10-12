@@ -31,4 +31,5 @@ class project_materials(models.Model):
 class project_project(models.Model):
 	_inherit = 'project.project'
 
-	material_ids = fields.One2many(comodel_name='project.materials',inverse_name='project_id')
+	material_ids = fields.One2many(comodel_name='project.materials',inverse_name='project_id',readonly=True,\
+			states={'draft': [('readonly', False)],'open': [('readonly', False)]})
