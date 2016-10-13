@@ -32,6 +32,7 @@
 	<field name="arch" type="xml">
 		<xpath expr="//field[@name='material_ids']" position="attributes">
 			<attribute name="readonly">0</attribute>
+			<attribute name="editable">bottom</attribute>
 		</xpath>
 	</field>
     </record>
