@@ -1,3 +1,3 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_project_materials,project_materials,project_materials.model_project_materials,base.group_manager,1,0,0,0
+access_project_materials,project_materials,project_materials.model_project_materials,project.group_project_manager,1,0,0,0
 access_project_materials,project_materials,project_materials.model_project_materials,project_materials.group_project_supervisor,1,1,1,1
