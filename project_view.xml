@@ -10,8 +10,8 @@
           <!--Materials budgeted-->
           <xpath expr="//page[1]" position="after">
 		<page string="Materiales presupuestados" groups="project.group_project_manager">
-			<field name="material_ids" >
-		            <tree string="Materiales presupuestados" editable="top">
+			<field name="material_ids" readonly="1">
+		            <tree string="Materiales presupuestados">
        			      <field name="product_id"/>
 		              <field name="qty_budget"/>
         		      <field name="qty_consumed" />
@@ -21,6 +21,19 @@
 		</page>
  	  </xpath>
       </field>
+    </record>
+
+
+    <record model="ir.ui.view" id="view_project_form_materials_v2">
+	<field name="name">project.form.materials.v2</field>
+	<field name="model">project.project</field>
+	<field name="inherit_id" ref="project_materials.view_project_form_materials" />
+	<field name="groups_id" eval="[(6,0,[ref('project.group_project_supervisor')])]" />
+	<field name="arch" type="xml">
+		<xpath expr="//field[@name='material_ids']" position="attributes">
+			<attribute name="readonly">0</attribute>
+		</xpath>
+	</field>
     </record>
 
   </data>
