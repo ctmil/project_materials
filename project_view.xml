@@ -11,7 +11,7 @@
           <xpath expr="//page[1]" position="after">
 		<page string="Materiales presupuestados" groups="project.group_project_manager">
 			<field name="material_ids" readonly="1">
-		            <tree string="Materiales presupuestados">
+		            <tree string="Materiales presupuestados" editable="bottom">
        			      <field name="product_id"/>
 		              <field name="qty_budget"/>
         		      <field name="qty_consumed" />
