@@ -28,8 +28,8 @@
     'depends': ['project','purchase'],
     'data': [
 	'project_view.xml',
+	'security/security.xml',
 	'security/ir.model.access.csv',
-	'security/security.xml'
     ],
     'qweb': [
     ],
