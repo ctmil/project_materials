@@ -27,9 +27,9 @@
     'license': 'AGPL-3',
     'depends': ['project','purchase'],
     'data': [
-	'project_view.xml',
 	'security/security.xml',
 	'security/ir.model.access.csv',
+	'project_view.xml',
     ],
     'qweb': [
     ],
