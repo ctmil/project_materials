@@ -17,11 +17,12 @@ class project_materials(models.Model):
 	@api.one
 	def _compute_qty_consumed(self):
 		return_value = 0
-		purchase_lines = self.env['purchase.order.line'].search([('account_analytic_id','=',self.project_id.analytic_account_id.id),\
+		for project in self.project_id.child_ids:
+			purchase_lines = self.env['purchase.order.line'].search([('account_analytic_id','=',project.analytic_account_id.id),\
 					('product_id','=',self.product_id.id)])
-		for line in purchase_lines:
-			if line.order_id.state in ['purchase','done']:
-				return_value = return_value + line.product_qty
+			for line in purchase_lines:
+				if line.order_id.state in ['purchase','done']:
+					return_value = return_value + line.product_qty
 		self.qty_consumed = return_value
 
 	@api.one
