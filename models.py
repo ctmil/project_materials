@@ -19,6 +19,7 @@ class project_materials(models.Model):
 		return_value = 0
 		if self.project_id:
 			return_value = self.project_id._consumed_materials(qty=0,product_id = self.product_id.id)
+			import pdb;pdb.set_trace()
 		self.qty_consumed = return_value
 
 	@api.one
@@ -44,9 +45,11 @@ class project_project(models.Model):
 	material_ids = fields.One2many(comodel_name='project.materials',inverse_name='project_id',readonly=True,\
 			states={'draft': [('readonly', False)],'open': [('readonly', False)]})
 
-	@api.one
+	@api.multi
 	def _consumed_materials(self,qty = 0, product_id = None):
 		if not product_id:
+			return None
+		if not self.ensure_one():
 			return None
 		if self.child_ids:
 			purchase_lines = self.env['purchase.order.line'].search([('account_analytic_id','=',self.analytic_account_id.id),\
@@ -62,7 +65,8 @@ class project_project(models.Model):
 					if type(ret_value) == list:
 						qty = qty + ret_value[0]
 					else:
-						qty = qty + ret_value
+						if type(ret_value) == float:
+							qty = qty + ret_value
 		else:
 			purchase_lines = self.env['purchase.order.line'].search([('account_analytic_id','=',self.analytic_account_id.id),\
 					('product_id','=',product_id)])
