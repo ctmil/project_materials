@@ -18,7 +18,7 @@ class project_materials(models.Model):
 	def _compute_qty_consumed(self):
 		return_value = 0
 		if self.project_id:
-			return_value = self.project_id._consumed_materials(0)
+			return_value = self.project_id._consumed_materials(qty=0,product_id = self.product_id.id)
 		self.qty_consumed = return_value
 
 	@api.one
@@ -45,13 +45,15 @@ class project_project(models.Model):
 			states={'draft': [('readonly', False)],'open': [('readonly', False)]})
 
 	@api.one
-	def _consumed_materials(self,qty = 0):
+	def _consumed_materials(self,qty = 0, product_id = None):
+		if not product_id:
+			return None
 		if self.child_ids:
 			for project in self.child_ids:
-				qty = qty + project._consumed_materials(qty)
+				qty = qty + project._consumed_materials(qty, product_id)
 		else:
 			purchase_lines = self.env['purchase.order.line'].search([('account_analytic_id','=',self.analytic_account_id.id),\
-					('product_id','=',self.product_id.id)])
+					('product_id','=',product_id)])
 			for line in purchase_lines:
 				if line.order_id.state in ['purchase','done']:
 					qty = qty + line.product_qty
