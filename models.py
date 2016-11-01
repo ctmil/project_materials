@@ -57,7 +57,9 @@ class project_project(models.Model):
 					return_value = return_value + line.product_qty
 			qty = qty + return_value
 			for project in self.child_ids:
-				qty = qty + project._consumed_materials(qty, product_id)[0]
+				ret_value = project._consumed_materials
+				if ret_value:
+					qty = qty + ret_value[0]
 		else:
 			purchase_lines = self.env['purchase.order.line'].search([('account_analytic_id','=',self.analytic_account_id.id),\
 					('product_id','=',product_id)])
