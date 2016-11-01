@@ -66,4 +66,4 @@ class project_project(models.Model):
 				if line.order_id.state in ['purchase','done']:
 					return_value = return_value + line.product_qty
 			qty = qty + return_value
-			return qty
+			return int(qty)
