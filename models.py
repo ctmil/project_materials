@@ -48,25 +48,16 @@ class project_project(models.Model):
 	def _consumed_materials(self,qty = 0, product_id = None):
 		if not self.ensure_one():
 			return None
+		purchase_lines = self.env['purchase.order.line'].search([('account_analytic_id','=',self.analytic_account_id.id),\
+				('product_id','=',product_id)])
+		return_value = 0
+		for line in purchase_lines:
+			if line.order_id.state in ['purchase','done']:
+				return_value = return_value + line.product_qty
+		qty = qty + return_value
 		if self.child_ids:
-			purchase_lines = self.env['purchase.order.line'].search([('account_analytic_id','=',self.analytic_account_id.id),\
-					('product_id','=',product_id)])
-			return_value = 0
-			for line in purchase_lines:
-				if line.order_id.state in ['purchase','done']:
-					return_value = return_value + line.product_qty
-			qty = qty + return_value
 			for project in self.child_ids:
 				ret_value = project._consumed_materials(qty = qty, product_id = product_id)
 				if ret_value:
 					qty = qty + ret_value
-			return qty
-		else:
-			purchase_lines = self.env['purchase.order.line'].search([('account_analytic_id','=',self.analytic_account_id.id),\
-					('product_id','=',product_id)])
-			return_value = 0
-			for line in purchase_lines:
-				if line.order_id.state in ['purchase','done']:
-					return_value = return_value + line.product_qty
-			qty = qty + return_value
-			return qty
+		return qty
