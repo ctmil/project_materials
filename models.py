@@ -58,6 +58,6 @@ class project_project(models.Model):
 		print qty
 		if self.child_ids:
 			for project in self.child_ids:
-				return project._connumed_materials(qty = qty, product_id = product_id)
+				return project._consumed_materials(qty = qty, product_id = product_id)
 		print qty
 		return qty
