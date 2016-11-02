@@ -52,6 +52,7 @@ class project_project(models.Model):
 			if line.order_id.state in ['purchase','done']:
 				return_value = return_value + line.product_qty
 		qty = qty + return_value
+		print qty
 		if self.child_ids:
 			for project in self.child_ids:
 				return project._consumed_materials(qty = qty, product_id = product_id)
