@@ -24,12 +24,9 @@ class project_materials(models.Model):
 	@api.one
 	def _compute_qty_delivered(self):
 		return_value = 0
-		purchase_lines = self.env['purchase.order.line'].search([('account_analytic_id','=',self.project_id.analytic_account_id.id),\
-					('product_id','=',self.product_id.id)])
-		for line in purchase_lines:
-			if line.order_id.state in ['purchase','done']:
-				return_value = return_value + line.qty_received
-		self.qty_delivered = return_value
+		if self.project_id:
+			return_value = self.project_id._delivered_materials(qty=0,product_id = self.product_id.id)
+		self.qty_delivered = return_value 
 
 
 	project_id = fields.Many2one('project.project')
@@ -55,9 +52,23 @@ class project_project(models.Model):
 			if line.order_id.state in ['purchase','done']:
 				return_value = return_value + line.product_qty
 		qty = qty + return_value
-		print qty
 		if self.child_ids:
 			for project in self.child_ids:
 				return project._consumed_materials(qty = qty, product_id = product_id)
-		print qty
+		return qty
+
+	@api.multi
+	def _delivered_materials(self,qty = 0, product_id = None):
+		if not self.ensure_one():
+			return None
+		purchase_lines = self.env['purchase.order.line'].search([('account_analytic_id','=',self.analytic_account_id.id),\
+					('product_id','=',product_id)])
+		return_value = 0
+		for line in purchase_lines:
+			if line.order_id.state in ['purchase','done']:
+				return_value = return_value + line.qty_received
+		qty = qty + return_value
+		if self.child_ids:
+			for project in self.child_ids:
+				return project._delivered_materials(qty = qty, product_id = product_id)
 		return qty
