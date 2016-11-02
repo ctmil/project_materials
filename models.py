@@ -50,10 +50,11 @@ class project_project(models.Model):
 			return None
 		if self.child_ids:
 			for project in self.child_ids:
-				ret_value = project._consumed_materials(qty = qty, product_id = product_id)
-				if ret_value:
-					qty = qty + ret_value
-					print qty
+				#ret_value = project._consumed_materials(qty = qty, product_id = product_id)
+				return project._consumed_materials(qty = qty, product_id = product_id)
+				#if ret_value:
+				#	qty = qty + ret_value
+				#	print qty
 		purchase_lines = self.env['purchase.order.line'].search([('account_analytic_id','=',self.analytic_account_id.id),\
 				('product_id','=',product_id)])
 		return_value = 0
@@ -61,5 +62,4 @@ class project_project(models.Model):
 			if line.order_id.state in ['purchase','done']:
 				return_value = return_value + line.product_qty
 		qty = qty + return_value
-		print qty
 		return qty
