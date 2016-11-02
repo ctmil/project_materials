@@ -46,8 +46,6 @@ class project_project(models.Model):
 
 	@api.multi
 	def _consumed_materials(self,qty = 0, product_id = None):
-		if not product_id:
-			return None
 		if not self.ensure_one():
 			return None
 		if self.child_ids:
