@@ -110,8 +110,8 @@ class project_project(models.Model):
 		if not self.ensure_one():
 			return None
 		pickings = self.env['stock.picking'].search([('project_id','=',self.id),('state','=','done')])
+		return_value = 0
 		for picking in pickings:
-			return_value = 0
 			packs = self.env['stock.pack.operation'].search([('picking_id','=',picking.id),\
 					('product_id','=',product_id)])
 			for pack in packs:
