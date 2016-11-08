@@ -2,6 +2,19 @@
 <openerp>
   <data>
 
+    <record id="res_users_form_project" model="ir.ui.view">
+      <field name="name">res.users.form.project</field>
+      <field name="model">res.users</field>
+      <field name="inherit_id" ref="base.view_users_form"/>
+      <field name="arch" type="xml">
+          <xpath expr="//page[1]/group" position="after">
+		<group string="Projects">
+			<field name="project_id" string="Proyecto por defecto" />
+		</group>
+ 	  </xpath>
+      </field>
+    </record>
+
     <record id="view_project_form_materials" model="ir.ui.view">
       <field name="name">project.form.materials</field>
       <field name="model">project.project</field>

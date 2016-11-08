@@ -11,6 +11,11 @@ from openerp.fields import Date as newdate
 #Get the logger
 _logger = logging.getLogger(__name__)
 
+class res_users(models.Model):
+	_inherit = 'res.users'
+
+	project_id = fields.Many2one(comodel_name='project.project')
+
 class project_materials(models.Model):
 	_name = 'project.materials'
 
