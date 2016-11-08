@@ -105,7 +105,7 @@ class project_project(models.Model):
 				return project._delivered_materials(qty = qty, product_id = product_id)
 		return qty
 
-	@api
+	@api.multi
 	def _used_materials(self,qty=0,product_id = None):
 		if not self.ensure_one():
 			return None
