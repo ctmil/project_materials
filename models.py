@@ -14,7 +14,7 @@ _logger = logging.getLogger(__name__)
 class stock_picking(models.Model):
 	_inherit = 'stock.picking'
 
-
+	"""
 	@api.model
 	def create(self,vals):
 		picking_type = vals.get('picking_type_id',False)
@@ -25,7 +25,7 @@ class stock_picking(models.Model):
 				if user.project_id:
 					vals['project_id'] = user.project_id.id
                 return super(stock_picking, self).create(vals)
-
+	"""
 	
 	project_id = fields.Many2one(comodel_name='project.project')
 
@@ -51,12 +51,20 @@ class project_materials(models.Model):
 			return_value = self.project_id._delivered_materials(qty=0,product_id = self.product_id.id)
 		self.qty_delivered = return_value 
 
+	@api.one
+	def _compute_qty_used(self):
+		return_value = 0
+		if self.project_id:
+			return_value = self.project_id._used_materials(qty=0,product_id = self.product_id.id)
+		self.qty_used = return_value 
+
 
 	project_id = fields.Many2one('project.project')
 	product_id = fields.Many2one('product.product',string='Producto')
 	qty_budget = fields.Float(string='Cantidad Presupuestada')
 	qty_consumed = fields.Float(string='Cantidad Ordenada',compute=_compute_qty_consumed)
 	qty_delivered = fields.Float(string='Cantidad Entregada',compute=_compute_qty_delivered)
+	qty_used = fields.Float(string='Cantidad Usada',compute=_compute_qty_used)
 
 class project_project(models.Model):
 	_inherit = 'project.project'
@@ -95,4 +103,21 @@ class project_project(models.Model):
 		if self.child_ids:
 			for project in self.child_ids:
 				return project._delivered_materials(qty = qty, product_id = product_id)
+		return qty
+
+	@api
+	def _used_materials(self,qty=0,product_id = None):
+		if not self.ensure_one():
+			return None
+		pickings = self.env['stock.picking'].search([('project_id','=',self.id),('state','=','done')])
+		for picking in pickings:
+			return_value = 0
+			packs = self.env['stock.pack.operation'].search([('picking_id','=',picking.id),\
+					('product_id','=',product_id)])
+			for pack in packs:
+				return_value = return_value + pack.product_qty
+		qty = qty + return_value
+		if self.child_ids:
+			for project in self.child_ids:
+				return project._used_materials(qty = qty, product_id = product_id)
 		return qty
