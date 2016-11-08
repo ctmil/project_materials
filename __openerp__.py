@@ -25,7 +25,7 @@
     'version': '9.0.1.0.0',
     'category': 'project',
     'license': 'AGPL-3',
-    'depends': ['project','purchase'],
+    'depends': ['project','purchase','project_wbs','stock'],
     'data': [
 	'security/security.xml',
 	'security/ir.model.access.csv',

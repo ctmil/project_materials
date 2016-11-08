@@ -14,6 +14,18 @@ _logger = logging.getLogger(__name__)
 class stock_picking(models.Model):
 	_inherit = 'stock.picking'
 
+
+	@api.model
+	def create(self,vals):
+		picking_type = vals.get('picking_type_id',False)
+		if picking_type:
+			picking_type = self.env['stock.picking.type'].browse(picking_type)
+			if picking_type.code in ['internal','outgoing']:
+				user = self.env['res.users'].browse(self.env.context['uid'])
+				if user.project_id:
+					vals['project_id'] = user.project_id.id
+                return super(stock_picking, self).create(vals)
+
 	
 	project_id = fields.Many2one(comodel_name='project.project')
 
