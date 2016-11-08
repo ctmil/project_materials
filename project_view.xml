@@ -40,6 +40,7 @@
 		              <field name="qty_budget"/>
         		      <field name="qty_consumed" />
         		      <field name="qty_delivered" />
+        		      <field name="qty_used" />
 	       		    </tree>
 			</field>
 		</page>
