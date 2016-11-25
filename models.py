@@ -125,7 +125,6 @@ class project_project(models.Model):
 
 	@api.one
 	def project_recalculate_materials(self):
-		import pdb;pdb.set_trace()
 		materials = self.env['project.materials'].search([('project_id','=',self.id),('tipo_material','=','children')])
 		for material in materials:
 			material.unlink()
@@ -139,6 +138,7 @@ class project_project(models.Model):
 					process = False
 				if original_project_id.parent_id.id == self.id:
 					update_flag = True
+					process =False
 				else:
 					original_project_id = original_project_id.parent_id
 			if update_flag:
