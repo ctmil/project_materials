@@ -143,7 +143,7 @@ class project_project(models.Model):
 					original_project_id = original_project_id.parent_id
 			if update_flag:
 				update_id = self.env['project.materials'].search([('product_id','=',material.product_id.id),\
-					('project_id','=',material.project_id.id),('tipo_material','=','children')])
+					('project_id','=',self.id),('tipo_material','=','children')])
 				if not update_id:
 					vals = {
 						'project_id': self.id,
