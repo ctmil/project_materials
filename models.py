@@ -122,3 +122,30 @@ class project_project(models.Model):
 			for project in self.child_ids:
 				return project._used_materials(qty = qty, product_id = product_id)
 		return qty
+
+	@api.one
+	def project_recalculate_materials(self):
+		import pdb;pdb.set_trace()
+		materials = self.env['project.materials'].search([('project_id','=',self.id),('tipo_material','=','children')])
+		for material in materials:
+			material.unlink()
+		materials = self.env['project.materials'].search([('project_id','!=',self.id),('tipo_material','=','own')])
+		for material in materials:
+			process = True
+			original_project_id = material.project_id
+			update_flag = False
+			while process:
+				if not original_project_id.parent_id:
+					process = False
+				if original_project_id.parent_id.id == self.id:
+					update_flag = True
+				else:
+					original_project_id = original_project_id.parent_id
+			if update_flag:
+				vals = {
+					'project_id': self.id,
+					'product_id': material.product_id.id,
+					'qty_budget': 0,
+					'tipo_material': 'children',
+					}
+				material_id = self.env['project.materials'].create(vals)
