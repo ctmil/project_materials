@@ -65,6 +65,7 @@ class project_materials(models.Model):
 	qty_consumed = fields.Float(string='Cantidad Ordenada',compute=_compute_qty_consumed)
 	qty_delivered = fields.Float(string='Cantidad Entregada',compute=_compute_qty_delivered)
 	qty_used = fields.Float(string='Cantidad Usada',compute=_compute_qty_used)
+	tipo_material = fields.Selection([('children','Hijos'),('own','Propio')],default='own')
 
 class project_project(models.Model):
 	_inherit = 'project.project'
