@@ -142,10 +142,19 @@ class project_project(models.Model):
 				else:
 					original_project_id = original_project_id.parent_id
 			if update_flag:
-				vals = {
-					'project_id': self.id,
-					'product_id': material.product_id.id,
-					'qty_budget': 0,
-					'tipo_material': 'children',
-					}
-				material_id = self.env['project.materials'].create(vals)
+				update_id = self.env['project.materials'].search([('product_id','=',material.product_id.id),\
+					('project_id','=',material.project_id.id),('tipo_material','=','children')])
+				if not update_id:
+					vals = {
+						'project_id': self.id,
+						'product_id': material.product_id.id,
+						'qty_budget': material.qty_budget,
+						'tipo_material': 'children',
+						}
+					material_id = self.env['project.materials'].create(vals)
+				else:
+					vals = {
+						'qty_budget': update_id.qty_budget + material.qty_budget,
+						'tipo_material': 'children',
+						}
+					update_id = self.env['project.materials'].write(vals)
