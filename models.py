@@ -157,4 +157,4 @@ class project_project(models.Model):
 						'qty_budget': update_id.qty_budget + material.qty_budget,
 						'tipo_material': 'children',
 						}
-					update_id = self.env['project.materials'].write(vals)
+					update_id.write(vals)

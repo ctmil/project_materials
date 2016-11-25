@@ -37,7 +37,7 @@
 		        <group>
                             <button name="project_recalculate_materials" 
                               string="Recalcular materiales" 
-				icon="fa-calculator" />
+				type="object" icon="fa-calculator" />
                         </group>
 			<field name="material_ids" >
 		            <tree string="Materiales presupuestados" editable="bottom">
@@ -46,6 +46,7 @@
         		      <field name="qty_consumed" />
         		      <field name="qty_delivered" />
         		      <field name="qty_used" />
+        		      <field name="tipo_material" readonly="1"/>
 	       		    </tree>
 			</field>
 		</page>
