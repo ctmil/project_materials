@@ -70,8 +70,33 @@ class project_materials(models.Model):
 class project_project(models.Model):
 	_inherit = 'project.project'
 
+	project_monthly_budget = fields.Float('Monto presupuestado mensual')
+	project_monthly_spend = fields.Float('Monto consumido',compute=_compute_monthly_spend)
 	material_ids = fields.One2many(comodel_name='project.materials',inverse_name='project_id',readonly=True,\
 			states={'draft': [('readonly', False)],'open': [('readonly', False)]})
+
+	@api.one
+	def _compute_monthly_spend(self):
+		return_value = 0
+		return_value = self._monthly_spend(amount=0)
+		self.qty_used = return_value 
+
+	@api.multi
+	def _monthly_spend(self,amount = 0):
+		if not self.ensure_one():
+			return None
+		purchase_lines = self.env['purchase.order.line'].search([('account_analytic_id','=',self.analytic_account_id.id)])
+		return_value = 0
+		import pdb;pdb.set_trace()
+		for line in purchase_lines:
+			if line.order_id.state in ['purchase','done']:
+				return_value = return_value + line.price_subtotal
+		amount = amount + return_value
+		print amount
+		if self.child_ids:
+			for project in self.child_ids:
+				return project._monthly_spend(amount = amount)
+		return amount
 
 	@api.multi
 	def _consumed_materials(self,qty = 0, product_id = None):
