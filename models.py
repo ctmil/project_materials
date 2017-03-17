@@ -75,7 +75,7 @@ class purchase_order_line(models.Model):
 	def _check_monthly_spend(self):
 		if self.price_subtotal > 0 and self.analytic_account_id:
 			project = self.env['project.project'].search([('analytic_account_id','=',self.analytic_account_id.id)])
-			if project and (project.project_monthly_spend + self.price_subtotal) > project.project_monthly_budget):
+			if project and (project.project_monthly_spend + self.price_subtotal) > project.project_monthly_budget:
 				raise ValidationError('El presupuesto mensual para el proyecto ya se encuentra consumido')
 
 
