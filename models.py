@@ -68,6 +68,17 @@ class project_materials(models.Model):
 	qty_used = fields.Float(string='Cantidad Usada',compute=_compute_qty_used)
 	tipo_material = fields.Selection([('children','Hijos'),('own','Propio')],default='own')
 
+class purchase_order_line(models.Model):
+	_inherit = 'purchase.order.line'
+
+	@api.constrains('price_subtotal','analytic_account_id')
+	def _check_monthly_spend(self):
+		if self.price_subtotal > 0 and self.analytic_account_id:
+			project = self.env['project.project'].search([('analytic_account_id','=',self.analytic_account_id.id)])
+			if project and (project.project_monthly_spend + self.price_subtotal) > project.project_monthly_budget):
+				raise ValidationError('El presupuesto mensual para el proyecto ya se encuentra consumido')
+
+
 class project_project(models.Model):
 	_inherit = 'project.project'
 
