@@ -6,6 +6,7 @@ import urllib2, httplib, urlparse, gzip, requests, json
 import openerp.addons.decimal_precision as dp
 import logging
 import datetime
+from datetime import date
 from openerp.fields import Date as newdate
 
 #Get the logger
@@ -70,16 +71,16 @@ class project_materials(models.Model):
 class project_project(models.Model):
 	_inherit = 'project.project'
 
-	project_monthly_budget = fields.Float('Monto presupuestado mensual')
-	project_monthly_spend = fields.Float('Monto consumido',compute=_compute_monthly_spend)
-	material_ids = fields.One2many(comodel_name='project.materials',inverse_name='project_id',readonly=True,\
-			states={'draft': [('readonly', False)],'open': [('readonly', False)]})
-
 	@api.one
 	def _compute_monthly_spend(self):
 		return_value = 0
 		return_value = self._monthly_spend(amount=0)
-		self.qty_used = return_value 
+		self.project_monthly_spend = return_value 
+
+	project_monthly_budget = fields.Monetary('Monto presupuestado mensual')
+	project_monthly_spend = fields.Monetary('Monto consumido',compute=_compute_monthly_spend)
+	material_ids = fields.One2many(comodel_name='project.materials',inverse_name='project_id',readonly=True,\
+			states={'draft': [('readonly', False)],'open': [('readonly', False)]})
 
 	@api.multi
 	def _monthly_spend(self,amount = 0):
@@ -87,12 +88,16 @@ class project_project(models.Model):
 			return None
 		purchase_lines = self.env['purchase.order.line'].search([('account_analytic_id','=',self.analytic_account_id.id)])
 		return_value = 0
-		import pdb;pdb.set_trace()
 		for line in purchase_lines:
-			if line.order_id.state in ['purchase','done']:
+			date_order = line.date_order
+			year_order = int(date_order[:4])
+			month_order = int(date_order[5:7])
+			today = date.today()
+			if line.order_id.state in ['purchase','done'] \
+				and today.month == month_order \
+				and today.year == year_order:
 				return_value = return_value + line.price_subtotal
 		amount = amount + return_value
-		print amount
 		if self.child_ids:
 			for project in self.child_ids:
 				return project._monthly_spend(amount = amount)
