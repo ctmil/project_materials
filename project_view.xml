@@ -35,6 +35,7 @@
           <xpath expr="//page[1]" position="after">
 		<page string="Materiales presupuestados" groups="project.group_project_manager">
 			<group string="Presupuesto Financiero">
+				<field name="check_project_budget" />
 				<field name="project_monthly_budget" />
 				<field name="project_monthly_spend" />
 			</group>

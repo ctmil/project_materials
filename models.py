@@ -88,6 +88,7 @@ class project_project(models.Model):
 		return_value = self._monthly_spend(amount=0)
 		self.project_monthly_spend = return_value 
 
+	check_project_budget = fields.Boolean('Controlar Presupuesto',default=False)
 	project_monthly_budget = fields.Monetary('Monto presupuestado mensual')
 	project_monthly_spend = fields.Monetary('Monto consumido',compute=_compute_monthly_spend)
 	material_ids = fields.One2many(comodel_name='project.materials',inverse_name='project_id',readonly=True,\
