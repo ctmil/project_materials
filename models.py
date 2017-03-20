@@ -68,15 +68,28 @@ class project_materials(models.Model):
 	qty_used = fields.Float(string='Cantidad Usada',compute=_compute_qty_used)
 	tipo_material = fields.Selection([('children','Hijos'),('own','Propio')],default='own')
 
-class purchase_order_line(models.Model):
-	_inherit = 'purchase.order.line'
+class purchase_order(models.Model):
+	_inherit = 'purchase.order'
 
-	@api.constrains('price_subtotal','account_analytic_id')
+	@api.one
+	@api.constrains('amount_total')
 	def _check_monthly_spend(self):
-		if self.price_subtotal > 0 and self.account_analytic_id:
-			project = self.env['project.project'].search([('analytic_account_id','=',self.account_analytic_id.id)])
-			if project and (project.project_monthly_spend + self.price_subtotal) > project.project_monthly_budget:
-				raise ValidationError('El presupuesto mensual para el proyecto ya se encuentra consumido')
+		for line in self.order_line:		
+			if line.price_subtotal > 0 and line.account_analytic_id:
+				project = self.env['project.project'].search([('analytic_account_id','=',line.account_analytic_id.id)])
+				check_budget = project.check_project_budget
+				if not check_budget:
+					old_project = project
+					while old_project:
+						if old_project.check_project_budget:
+							check_budget = True
+							project = old_project
+							break
+						old_project = old_project.parent_id
+				if project and check_budget:
+					# import pdb;pdb.set_trace()
+					if (project.project_monthly_spend + line.price_subtotal) > project.project_monthly_budget:
+						raise ValidationError('El presupuesto mensual para el proyecto ya se encuentra consumido')
 
 
 class project_project(models.Model):
