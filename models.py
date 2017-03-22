@@ -74,6 +74,7 @@ class purchase_order(models.Model):
 	@api.one
 	@api.constrains('amount_total')
 	def _check_monthly_spend(self):
+		user = self.env.context['uid']
 		for line in self.order_line:		
 			if line.price_subtotal > 0 and line.account_analytic_id:
 				project = self.env['project.project'].search([('analytic_account_id','=',line.account_analytic_id.id)])
@@ -87,6 +88,8 @@ class purchase_order(models.Model):
 							break
 						old_project = old_project.parent_id
 				if project and check_budget:
+					if project.user_id.id != user:
+						raise ValidationError('El usuario no se encuentra habilitado para realizar compras en el proyecto seleccionado')
 					# import pdb;pdb.set_trace()
 					if (project.project_monthly_spend + line.price_subtotal) > project.project_monthly_budget:
 						raise ValidationError('El presupuesto mensual para el proyecto ya se encuentra consumido')
