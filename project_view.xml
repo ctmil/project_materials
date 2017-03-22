@@ -32,6 +32,9 @@
       <field name="inherit_id" ref="project.edit_project"/>
       <field name="arch" type="xml">
           <!--Materials budgeted-->
+	  <field name="user_id" position="attributes">
+		<attribute name="groups"></attribute>
+	  </field>	
           <xpath expr="//page[1]" position="after">
 		<page string="Materiales presupuestados" groups="project.group_project_manager">
 			<group string="Presupuesto Financiero">
