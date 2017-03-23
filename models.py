@@ -74,7 +74,10 @@ class purchase_order(models.Model):
 	@api.one
 	@api.constrains('amount_total')
 	def _check_monthly_spend(self):
-		user = self.env.context['uid']
+		user_id = self.env.context['uid']
+		user = self.env['res.users'].browse(user_id)
+		if user.has_group('purchase.group_purchase_user') or user.has_group('purchase.group_purchase_manager'):
+			return True
 		for line in self.order_line:		
 			if line.price_subtotal > 0 and line.account_analytic_id:
 				project = self.env['project.project'].search([('analytic_account_id','=',line.account_analytic_id.id)])
@@ -88,6 +91,7 @@ class purchase_order(models.Model):
 							break
 						old_project = old_project.parent_id
 				if project and check_budget:
+					user = user_id
 					if project.user_id.id != user:
 						raise ValidationError('El usuario no se encuentra habilitado para realizar compras en el proyecto seleccionado')
 					# import pdb;pdb.set_trace()
@@ -124,7 +128,10 @@ class project_project(models.Model):
 			if line.order_id.state in ['purchase','done'] \
 				and today.month == month_order \
 				and today.year == year_order:
-				return_value = return_value + line.price_subtotal
+				user = self.env['res.users'].browse(line.order_id.create_uid.id)
+				#import pdb;pdb.set_trace()
+				if not user.has_group('purchase.group_purchase_user') and not user.has_group('purchase.group_purchase_manager'):
+					return_value = return_value + line.price_subtotal
 		amount = amount + return_value
 		if self.child_ids:
 			for project in self.child_ids:
